@@ -1,0 +1,30 @@
+(define (main)
+    (define env this)
+    (define (iter expr)
+         (if (not (eof?)) (begin (eval expr env) (iter (readExpr))))
+         )
+    (setPort (open (getElement ScamArgs 1) 'read))
+    (iter (readExpr))
+    )
+
+
+(define (curry @)
+    (define (append list1 list2)
+        (if (null? list1)
+            list2
+            (cons (car list1) (append (cdr list1) list2))
+            )
+        )
+
+
+    (define (help func len items)
+        (if (= len (length items)) (apply func items)
+            (lambda (@)
+                (help func len (append items @))
+                )
+            )
+        )
+    (define f (getElement @ 0))
+    (define plen (length (get 'parameters f)))
+    (help f plen (cdr @))
+    )
